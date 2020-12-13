@@ -11,7 +11,8 @@ FILE_NAME = 'Twitter Data.xlsx'
 wb = load_workbook(FILE_NAME)
 
 # Consumer API keys
-CONFIG_DATA = json.load(open('config.json'))
+with open('config.json') as f:
+    CONFIG_DATA = json.load(f)
 consumer_key = CONFIG_DATA.get('consumer_key')
 consumer_secret_key = CONFIG_DATA.get('consumer_secret_key')
 callback_uri = CONFIG_DATA.get('callback_uri')
