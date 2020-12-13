@@ -3,6 +3,7 @@ import webbrowser
 import time
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
+import json
 
 
 # Dealing with Excel Files
@@ -10,9 +11,10 @@ FILE_NAME = 'Twitter Data.xlsx'
 wb = load_workbook(FILE_NAME)
 
 # Consumer API keys
-consumer_key = 'FvZwekAgRnt7qaXwL2oKmmyPG'
-consumer_secret_key = 'xOzGzaBV8fitAq9aQWRMW78Ry8JMZDyL1sYuqybSnLxOodaCYJ'
-callback_uri = 'oob'
+CONFIG_DATA = json.load(open('config.json'))
+consumer_key = CONFIG_DATA.get('consumer_key')
+consumer_secret_key = CONFIG_DATA.get('consumer_secret_key')
+callback_uri = CONFIG_DATA.get('callback_uri')
 
 # Authenticating the app
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret_key, callback_uri)
@@ -109,3 +111,4 @@ def insert_data_into_excel():
 
 # Calling the main function
 insert_data_into_excel()
+# print(CONFIG_DATA)
