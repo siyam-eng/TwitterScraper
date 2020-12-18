@@ -53,7 +53,6 @@ def get_user_data(screen_name):
         'url': url,
         'created_at': created_at,
         'verified': verified,
-        
     }
 
     return data_dict
@@ -114,4 +113,8 @@ def insert_data_into_excel():
 
 
 # Calling the main function
+<<<<<<< HEAD
 insert_data_into_excel()
+=======
+insert_data_into_excel()
+>>>>>>> 48b931a0e09705da96e9ce7352c9ccde8db7924a
