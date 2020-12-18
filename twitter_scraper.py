@@ -69,7 +69,7 @@ def customize_excel_sheet():
     bg_color = PatternFill(fgColor='E8E8E8', fill_type='solid')
 
     # editing the output sheet
-    output_column = zip(('A',  'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'), ('Screen Name', 'Name', 'Followers', 'Following', 'Description', 'Location', 'Link', 'Joined Date', 'Verified'))
+    output_column = zip(('A',  'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'), ('Screen Name', 'Name / ID', 'Followers', 'Following', 'Description', 'Location', 'Link', 'Joined Date', 'Verified'))
     for col, value in output_column:
         cell = output[f'{col}1']
         cell.value = value
@@ -94,22 +94,24 @@ def generate_screen_names():
 def insert_data_into_excel():
     customize_excel_sheet()
     for screen_name in generate_screen_names():
-        user_data = get_user_data(screen_name)
-        wb['Output'].append((
-            screen_name, 
-            user_data['name'], 
-            user_data['followers_count'], 
-            user_data['following_count'], 
-            user_data['description'], 
-            user_data['location'], 
-            user_data['url'], 
-            user_data['created_at'], 
-            user_data['verified'],
+        try:
+            user_data = get_user_data(screen_name)
 
-        ))
+            wb['Output'].append((
+                screen_name, 
+                user_data['name'], 
+                user_data['followers_count'], 
+                user_data['following_count'], 
+                user_data['description'], 
+                user_data['location'], 
+                user_data['url'], 
+                user_data['created_at'], 
+                user_data['verified'],))
+        except tweepy.error.TweepError as err:
+            wb['Errors'].append((screen_name, str(err)))
+            
     wb.save(FILE_NAME)
 
 
 # Calling the main function
 insert_data_into_excel()
-# print(CONFIG_DATA)
