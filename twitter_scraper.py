@@ -53,7 +53,6 @@ def get_user_data(screen_name):
         'url': url,
         'created_at': created_at,
         'verified': verified,
-        
     }
 
     return data_dict
@@ -112,4 +111,3 @@ def insert_data_into_excel():
 
 # Calling the main function
 insert_data_into_excel()
-# print(CONFIG_DATA)
