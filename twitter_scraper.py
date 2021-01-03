@@ -4,6 +4,9 @@ import time
 from openpyxl import load_workbook
 from openpyxl.styles import Font, PatternFill
 import json
+import requests
+from requests import Session
+import random
 
 
 # Dealing with Excel Files
@@ -29,6 +32,44 @@ auth.get_access_token(user_pin_input)
 # calling the api  
 api = tweepy.API(auth) 
 
+
+# creating a session object
+session = Session()
+HEADERS_LIST = [
+    'Mozilla/5.0 (Windows; U; Windows NT 6.1; x64; fr; rv:1.9.2.13) Gecko/20101203 Firebird/3.6.13',
+    'Mozilla/5.0 (compatible, MSIE 11, Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko',
+    'Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201',
+    'Opera/9.80 (X11; Linux i686; Ubuntu/14.10) Presto/2.12.388 Version/12.16',
+    'Mozilla/5.0 (Windows NT 5.2; RW; rv:7.0a1) Gecko/20091211 SeaMonkey/9.23a1pre'
+]
+
+HEADER = {'User-Agent': random.choice(HEADERS_LIST), 'X-Requested-With': 'XMLHttpRequest'}
+session.headers.update(HEADER)
+
+
+
+
+# takes an url and returns its status code and final redirected url
+def get_response_code(url):
+    global wb
+
+    url = 'https://' + url if not url.startswith('http') else url
+    final_url = url
+    try:
+        response = session.get(url)
+        final_url = response.url
+    except requests.exceptions.SSLError:
+        response = session.get(url, verify=False)
+        final_url = response.url
+    except requests.exceptions.ConnectionError as err:
+        final_url = url 
+        error = str(err)
+        wb['Errors'].append(('Failed to get the final url for ', url, 'Due to', error))
+    except Exception as err:
+        wb['Errors'].append(('Failed to get the final url for ', url, 'Due to', str(err)))
+
+    return final_url
+
 # fetching the user 
 def get_user_data(screen_name):
     user = api.get_user(screen_name) 
@@ -41,7 +82,7 @@ def get_user_data(screen_name):
     verified = user.verified
     description = user.description 
     created_at = user.created_at.strftime('%d %B %Y')
-    url = user.url
+    url = get_response_code(user.url) or None
 
 
     data_dict = {

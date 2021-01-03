@@ -133,6 +133,6 @@ dmypy.json
 # Secret Data
 config.json
 
-# Excel Files
-*.xlsx
-*.xls
+# Vscode
+.vscode
+.vscode/
