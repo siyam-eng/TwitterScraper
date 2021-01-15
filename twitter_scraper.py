@@ -87,6 +87,8 @@ def get_user_data(screen_name):
     verified = user.verified
     description = user.description
     created_at = user.created_at.strftime("%d %B %Y")
+    statuses_count = user.statuses_count
+    status_available = bool(statuses_count)
     url = get_response_code(user.url) or None
 
     data_dict = {
@@ -98,6 +100,8 @@ def get_user_data(screen_name):
         "url": url,
         "created_at": created_at,
         "verified": verified,
+        "status_available": status_available,
+        "statuses_count": statuses_count,
     }
 
     return data_dict
@@ -118,7 +122,7 @@ def customize_excel_sheet():
 
     # editing the output sheet
     output_column = zip(
-        ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J"),
+        ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"),
         (
             "Screen Name",
             "Name / ID",
@@ -129,6 +133,8 @@ def customize_excel_sheet():
             "Link",
             "Joined Date",
             "Verified",
+            "Status Available",
+            "Statuses Count",
         ),
     )
     for col, value in output_column:
@@ -169,6 +175,8 @@ def insert_data_into_excel():
                     user_data["url"],
                     user_data["created_at"],
                     user_data["verified"],
+                    user_data["status_available"],
+                    user_data["statuses_count"]
                 )
             )
         except tweepy.error.TweepError as err:
