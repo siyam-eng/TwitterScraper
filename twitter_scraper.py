@@ -9,8 +9,8 @@ import random
 
 
 # Dealing with Excel Files
-FILE_NAME = "Twitter Data.xlsx"
-wb = load_workbook(FILE_NAME)
+FILE_PATH = "Twitter Data.xlsx"
+wb = load_workbook(FILE_PATH)
 
 # Consumer API keys
 with open("config.json") as f:
@@ -182,7 +182,7 @@ def insert_data_into_excel():
         except tweepy.error.TweepError as err:
             wb["Errors"].append((screen_name, str(err)))
 
-    wb.save(FILE_NAME)
+    wb.save(FILE_PATH)
 
 
 # Calling the main function
