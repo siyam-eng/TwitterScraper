@@ -6,10 +6,11 @@ import json
 import requests
 from requests import Session
 import random
+import time
 
 
 # Dealing with Excel Files
-FILE_PATH = "Twitter Data.xlsx"
+FILE_PATH = "Twitter Data Error.xlsx"
 wb = load_workbook(FILE_PATH)
 
 # Consumer API keys
@@ -23,7 +24,7 @@ callback_uri = CONFIG_DATA.get("callback_uri")
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret_key, callback_uri)
 redirect_url = auth.get_authorization_url()
 
-# opening the link with selenium
+# opening the link with browser
 webbrowser.open(redirect_url)
 user_pin_input = input("What is your pin? ")
 auth.get_access_token(user_pin_input)
@@ -71,7 +72,6 @@ def get_response_code(url):
             wb["Errors"].append(
                 ("Failed to get the final url for ", url, "Due to", str(err))
             )
-
         return final_url
 
 
@@ -89,7 +89,7 @@ def get_user_data(screen_name):
     created_at = user.created_at.strftime("%d %B %Y")
     statuses_count = user.statuses_count
     status_available = bool(statuses_count)
-    url = get_response_code(user.url) or None
+    url = get_response_code(user.url)
 
     data_dict = {
         "name": name,
@@ -147,6 +147,9 @@ def customize_excel_sheet():
         # fixing the column width
         output.column_dimensions[col].width = 20
 
+    # save the customized file
+    wb.save(FILE_PATH)
+
 
 # Generates the input links
 def generate_screen_names():
@@ -161,6 +164,7 @@ def generate_screen_names():
 def insert_data_into_excel():
     customize_excel_sheet()
     for screen_name in generate_screen_names():
+        print(f'Scraping {screen_name}')
         try:
             user_data = get_user_data(screen_name)
 
@@ -181,9 +185,25 @@ def insert_data_into_excel():
             )
         except tweepy.error.TweepError as err:
             wb["Errors"].append((screen_name, str(err)))
+        except Exception as excep:
+            print(screen_name, excep)
+            wb["Errors"].append((screen_name, str(excep)))
 
-    wb.save(FILE_PATH)
+        # Take some rest 
+        time.sleep(0.25)
+
+        # save the file after each user 
+        wb.save(FILE_PATH)
+
+        # print completion statement
+        print(f"THE SCRIPT RAN SUCCESSFULLY!")
+
+    
 
 
 # Calling the main function
 insert_data_into_excel()
+
+
+
+
